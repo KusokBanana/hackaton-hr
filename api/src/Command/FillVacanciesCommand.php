@@ -30,14 +30,12 @@ class FillVacanciesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->entityManager->transactional(function() {
-            if (($handle = fopen(self::FILE_PATH, "r")) !== FALSE) {
-                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                    $this->createVacancy($data);
-                }
-                fclose($handle);
+        if (($handle = fopen(self::FILE_PATH, "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                $this->createVacancy($data);
             }
-        });
+            fclose($handle);
+        }
 
         return Command::SUCCESS;
     }
@@ -52,7 +50,22 @@ class FillVacanciesCommand extends Command
 
         $description = trim($data[1]);
 
-        $vacancy = new Vacancy($description);
-        $this->entityManager->persist($vacancy);
+        try {
+            $vacancy = new Vacancy($description);
+            $this->entityManager->persist($vacancy);
+            $this->entityManager->flush();
+        } catch (\Throwable $exception) {
+            $this->recreateEntityManager();
+        }
+    }
+
+    private function recreateEntityManager()
+    {
+        if (!$this->entityManager->isOpen()) {
+            $this->entityManager = $this->entityManager->create(
+                $this->entityManager->getConnection(),
+                $this->entityManager->getConfiguration()
+            );
+        }
     }
 }

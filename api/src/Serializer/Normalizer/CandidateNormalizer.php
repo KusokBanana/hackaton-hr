@@ -54,6 +54,7 @@ class CandidateNormalizer implements NormalizerInterface, CacheableSupportsMetho
                 $candidate->getExperience()
             ),
             'languages' => $candidate->getLanguages(),
+            'skills' => $this->normalizer->normalize($candidate->getSkills(), $format, $context),
         ];
     }
 
