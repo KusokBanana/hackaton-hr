@@ -37,6 +37,19 @@ services:
             - 8000:80
         networks:
             - symfony
+    
+    frontend:
+        container_name: hr_frontend
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        ports:
+            - 80:80
+        #    volumes:
+        #        - ./frontend:/var/www
+        #        - /var/www/node_modules
+        networks:
+            - symfony
 
 #    composer:
 #        image: composer
