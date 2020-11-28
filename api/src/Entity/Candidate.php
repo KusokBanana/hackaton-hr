@@ -21,6 +21,11 @@ class Candidate
     private int $id;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private string $name;
+
+    /**
      * @ORM\Column(type="string", length=1)
      */
     private string $sex;
@@ -84,6 +89,7 @@ class Candidate
     private Collection $skills;
 
     public function __construct(
+        string $name,
         string $sex,
         ?string $city,
         ?\DateTimeInterface $birthDate,
@@ -103,6 +109,7 @@ class Candidate
         Assert::thatAll($specialization)->isInstanceOf(Specialization::class);
         Assert::thatAll($educationHistory)->isInstanceOf(EducationHistory::class);
 
+        $this->name = $name;
         $this->sex = $sex;
         $this->city = $city;
         $this->birthDate = $birthDate;
@@ -120,6 +127,11 @@ class Candidate
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     public function getSex(): string

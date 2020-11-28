@@ -47,9 +47,9 @@ final class EducationHistoryType extends ArrayType
 
         return array_map(
             fn(array $item) => new EducationHistory(
-                $value['name'],
-                $value['organization'],
-                $value['year'],
+                $item['name'],
+                $item['organization'],
+                $item['year'],
             ),
             $value
         );

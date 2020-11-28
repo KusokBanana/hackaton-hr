@@ -12,25 +12,29 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class TempCommand extends Command
+class FillCandidatesCommand extends Command
 {
-    protected static $defaultName = 'app:temp';
+    protected static $defaultName = 'app:fill-candidates';
 
     private Connection $connection;
     private EntityManagerInterface $entityManager;
+    private HttpClientInterface $client;
 
     private array $skills = [];
 
     public function __construct(
         Connection $connection,
         EntityManagerInterface $entityManager,
+        HttpClientInterface $client,
         string $name = null
     )
     {
         parent::__construct($name);
         $this->connection = $connection;
         $this->entityManager = $entityManager;
+        $this->client = $client;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -50,8 +54,11 @@ class TempCommand extends Command
 
     private function parseCandidate(array $item): Candidate
     {
+        $sex = $item['gender'] === 'Мужчина' ? 'M' : 'F';
+
         return new Candidate(
-            $item['gender'] === 'Мужчина' ? 'M' : 'F',
+            $this->fetchName($sex),
+            $sex,
             trim($item['area']) ?: null,
             $this->parseBirthDate($item),
             $this->parseTitle($item),
@@ -186,5 +193,12 @@ class TempCommand extends Command
             ),
             $item['education'] ?: []
         );
+    }
+
+    private function fetchName(string $sex): string
+    {
+        $sex = $sex === 'M' ? 'male' : 'female';
+        $result = $this->client->request('GET', sprintf('https://api.namefake.com/russian-russia/%s/', $sex));
+        return $result->toArray()['name'];
     }
 }
