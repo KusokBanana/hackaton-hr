@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Candidate;
+use App\Entity\CandidateStatuses;
 use App\Entity\Relevance;
 use App\Entity\Vacancy;
 use App\Repository\VacancyRepository;
@@ -40,8 +42,9 @@ class VacancyController extends AbstractController
     {
         $limit = $request->query->get('limit', 50);
         $offset = $request->query->get('offset', 0);
+        $department = $request->query->get('department');
 
-        $vacancies = $this->findVacancies($limit, $offset);
+        $vacancies = $this->findVacancies($limit, $offset, $department);
 
         return $this->json([
             'data' => array_map(
@@ -98,19 +101,23 @@ class VacancyController extends AbstractController
             ->where($expr->eq('vacancy.id', ':id'))
             ->setParameter('id', $vacancy->getId());
 
-        if ($request->query->has('status')) { // todo
+        if ($request->query->has('status')) {
+            CandidateStatuses::validate($request->query->get('status'));
 
+            $queryBuilder
+                ->andWhere($expr->eq('candidate.status', ':status'))
+                ->setParameter('status', $request->query->get('status'));
         }
 
         if ($request->query->has('fit_from')) {
             $queryBuilder
-                ->andWhere($expr->gte('relevance.fir', ':from'))
+                ->andWhere($expr->gte('relevance.fit', ':from'))
                 ->setParameter('from', $request->query->get('fit_from'));
         }
 
         if ($request->query->has('fit_to')) {
             $queryBuilder
-                ->andWhere($expr->lte('relevance.fir', ':to'))
+                ->andWhere($expr->lte('relevance.fit', ':to'))
                 ->setParameter('to', $request->query->get('fit_to'));
         }
 
@@ -134,8 +141,15 @@ class VacancyController extends AbstractController
         ]);
     }
 
-    private function findVacancies(int $limit, int $offset): array
+    private function findVacancies(int $limit, int $offset, ?string $department): array
     {
+        $where = '';
+        $params = [];
+        if (is_string($department)) {
+            $where = 'WHERE v.department = ?';
+            $params[] = $department;
+        }
+
         return $this->connection->executeQuery(
             sprintf(
                 'select v.*, 
@@ -143,11 +157,13 @@ class VacancyController extends AbstractController
                 count(a.id) filter (where a.processed = false) as unprocessed_count
                 from vacancy v 
                 join application a on a.vacancy_id = v.id
+                %s
                 group by v.id
                 order by v.created_at desc, unprocessed_count DESC
                 LIMIT %d OFFSET %d',
-                $limit, $offset
-            )
+                $where, $limit, $offset
+            ),
+            $params
         )->fetchAllAssociative();
     }
 
