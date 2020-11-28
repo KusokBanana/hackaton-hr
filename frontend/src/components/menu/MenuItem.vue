@@ -30,7 +30,7 @@ export default {
   methods: {
     pushRoute() {
       if (!this.isActive) {
-        this.$router.push(this.item.path);
+        this.$router.push(`/${this.item.path}`);
       }
     },
   },

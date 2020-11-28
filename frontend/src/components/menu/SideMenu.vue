@@ -48,9 +48,9 @@ export default {
             },
             {
               name: "База резюме",
-              bgActive: "F4FCE7",
-              borderActive: "A7D066",
-              fontActive: "77A234",
+              bgActive: "F0EDFF",
+              borderActive: "7965E2",
+              fontActive: "7965E2",
               path: "resume",
             },
             {

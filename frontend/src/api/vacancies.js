@@ -6,5 +6,11 @@ export default {
         return request({
             'url': `${prefix}`
         })
+    },
+    async relevance(id) {
+        return request({
+            'url': `${prefix}/${id}/relevance`
+        })
     }
+    
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="w-full flex flex-col rounded shadow-card p-4 text-menugrey">
     <div class="flex flex-row">
-      <div class="text-black font-medium">{{item.title}}</div>
+      <div class="text-black font-medium cursor-pointer" @click="$router.push({ name: 'Position Candidates', params: { id: item.id } })">{{item.title}}</div>
       <div class="flex-grow"></div>
       <div>{{item.department}}</div>
     </div>
@@ -22,7 +22,7 @@
           :src="require(`@/assets/icons/trash.svg`)"
         />
       </div>
-      <Button class="ml-4" color="F7685B">Обработать</Button>
+      <Button class="ml-4" color="F7685B" @click="$router.push({ name: 'Position Candidates', params: { id: item.id } })">Обработать</Button>
     </div>
   </div>
 </template>

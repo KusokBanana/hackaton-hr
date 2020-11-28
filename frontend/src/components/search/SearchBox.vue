@@ -4,7 +4,7 @@
         <img src="@/assets/icons/search.svg">
     </div>
     <div class="flex-grow ml-3">
-      <input class="w-full outline-none" placeholder="Поиск по имени, заданию, сделке..." />
+      <input class="w-full outline-none" placeholder="Поиск по имени или вакансии" />
     </div>
   </div>
 </template>
