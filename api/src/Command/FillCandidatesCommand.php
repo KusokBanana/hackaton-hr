@@ -17,6 +17,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class FillCandidatesCommand extends Command
 {
     protected static $defaultName = 'app:fill-candidates';
+    private const FILE_PATH = '/var/www/data/candidates.json';
 
     private Connection $connection;
     private EntityManagerInterface $entityManager;
@@ -37,9 +38,9 @@ class FillCandidatesCommand extends Command
         $this->client = $client;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $data = json_decode(file_get_contents('/var/www/data.json'), true);
+        $data = json_decode(file_get_contents(self::FILE_PATH), true);
 
         $this->entityManager->transactional(function() use ($data) {
             foreach ($data as $item) {
