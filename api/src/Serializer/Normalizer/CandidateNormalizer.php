@@ -27,6 +27,7 @@ class CandidateNormalizer implements NormalizerInterface, CacheableSupportsMetho
             'birth_date' => $this->normalizer->normalize($candidate->getBirthDate(), $format, $context),
             'title' => $candidate->getTitle(),
             'about' => $candidate->getAbout(),
+            'status' => $candidate->getStatus(),
             'specialization' => array_map(
                 fn(Specialization $specialization) => [
                     'name' => $specialization->getName(),

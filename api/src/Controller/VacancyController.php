@@ -2,22 +2,32 @@
 
 namespace App\Controller;
 
+use App\Entity\Relevance;
+use App\Entity\Vacancy;
+use App\Repository\VacancyRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class VacancyController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private Connection $connection;
+    private VacancyRepository $vacancyRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, Connection $connection)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        Connection $connection,
+        VacancyRepository $vacancyRepository
+    )
     {
         $this->entityManager = $entityManager;
         $this->connection = $connection;
+        $this->vacancyRepository = $vacancyRepository;
     }
 
     /**
@@ -41,6 +51,86 @@ class VacancyController extends AbstractController
                 ),
                 $vacancies
             ),
+        ]);
+    }
+
+    /**
+     * @Route("/vacancies/{id}", name="vacancy")
+     * @param int     $id
+     *
+     * @return Response
+     */
+    public function vacancy(int $id): Response
+    {
+        $vacancy = $this->vacancyRepository->findOneBy(['id' => $id]);
+
+        if (!$vacancy instanceof Vacancy) {
+            throw new NotFoundHttpException('Vacancy not found');
+        }
+
+        return $this->json($vacancy);
+    }
+
+    /**
+     * @Route("/vacancies/{id}/relevance", name="vacancy-relevance")
+     * @param int     $id
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function vacancyCandidates(int $id, Request $request): Response
+    {
+        $vacancy = $this->vacancyRepository->findOneBy(['id' => $id]);
+
+        if (!$vacancy instanceof Vacancy) {
+            throw new NotFoundHttpException('Vacancy not found');
+        }
+
+        $expr = $this->entityManager->getExpressionBuilder();
+
+        $queryBuilder = $this->entityManager->createQueryBuilder()
+            ->select('relevance')
+            ->addSelect('candidate')
+            ->from(Relevance::class, 'relevance')
+            ->join('relevance.candidate', 'candidate')
+            ->join('relevance.vacancy', 'vacancy')
+            ->where($expr->eq('vacancy.id', ':id'))
+            ->setParameter('id', $vacancy->getId());
+
+        if ($request->query->has('status')) { // todo
+
+        }
+
+        if ($request->query->has('fit_from')) {
+            $queryBuilder
+                ->andWhere($expr->gte('relevance.fir', ':from'))
+                ->setParameter('from', $request->query->get('fit_from'));
+        }
+
+        if ($request->query->has('fit_to')) {
+            $queryBuilder
+                ->andWhere($expr->lte('relevance.fir', ':to'))
+                ->setParameter('to', $request->query->get('fit_to'));
+        }
+
+        if ($request->query->has('skills')) {
+            $queryBuilder
+                ->join('candidate.skills', 'skills')
+                ->andWhere($expr->in('skills.id', ':skills'))
+                ->setParameter('skills', $request->query->get('skills'));
+        }
+
+        $data = array_map(
+            fn(Relevance $relevance) => [
+                'fit' => $relevance->getFit(),
+                'candidate' => $relevance->getCandidate(),
+            ],
+            $queryBuilder->getQuery()->getResult()
+        );
+
+        return $this->json([
+            'data' => $data,
         ]);
     }
 

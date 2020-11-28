@@ -49,6 +49,11 @@ class Vacancy
      */
     private Collection $skills;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Relevance::class, mappedBy="vacancy")
+     */
+    private Collection $relevance;
+
     public function __construct(string $title, string $description, string $department, \DateTimeInterface $createdAt)
     {
         $this->title = $title;
@@ -57,6 +62,7 @@ class Vacancy
         $this->createdAt = $createdAt;
         $this->applications = new ArrayCollection();
         $this->skills = new ArrayCollection();
+        $this->relevance = new ArrayCollection();
     }
 
     public function getId(): int
@@ -103,17 +109,47 @@ class Vacancy
     }
 
     /**
-     * @return Collection|Skill[]
+     * @return Skill[]
      */
-    public function getSkills(): Collection
+    public function getSkills(): array
     {
-        return $this->skills;
+        return $this->skills->toArray();
     }
 
     public function addSkill(Skill $skill): self
     {
         if (!$this->skills->contains($skill)) {
             $this->skills[] = $skill;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Relevance[]
+     */
+    public function getRelevance(): array
+    {
+        return $this->relevance->toArray();
+    }
+
+    public function addRelevance(Relevance $relevance): self
+    {
+        if (!$this->relevance->contains($relevance)) {
+            $this->relevance[] = $relevance;
+            $relevance->setVacancy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelevance(Relevance $relevance): self
+    {
+        if ($this->relevance->removeElement($relevance)) {
+            // set the owning side to null (unless already changed)
+            if ($relevance->getVacancy() === $this) {
+                $relevance->setVacancy(null);
+            }
         }
 
         return $this;

@@ -84,9 +84,19 @@ class Candidate
     private ?string $about;
 
     /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private string $status;
+
+    /**
      * @ORM\ManyToMany(targetEntity=Skill::class)
      */
     private Collection $skills;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Relevance::class, mappedBy="candidate", orphanRemoval=true)
+     */
+    private Collection $relevance;
 
     public function __construct(
         string $name,
@@ -122,6 +132,8 @@ class Candidate
         $this->languages = $languages;
         $this->about = $about;
         $this->skills = new ArrayCollection($skills);
+        $this->relevance = new ArrayCollection();
+        $this->status = CandidateStatuses::STATUS_INITIAL;
     }
 
     public function getId(): int
@@ -183,16 +195,51 @@ class Candidate
         return $this->about;
     }
 
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
     public function getLanguages(): array
     {
         return $this->languages;
     }
 
     /**
-     * @return Collection|Skill[]
+     * @return Skill[]
      */
     public function getSkills(): array
     {
         return $this->skills->toArray();
+    }
+
+    /**
+     * @return Relevance[]
+     */
+    public function getRelevance(): array
+    {
+        return $this->relevance->toArray();
+    }
+
+    public function addRelevance(Relevance $relevance): self
+    {
+        if (!$this->relevance->contains($relevance)) {
+            $this->relevance[] = $relevance;
+            $relevance->setCandidate($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelevance(Relevance $relevance): self
+    {
+        if ($this->relevance->removeElement($relevance)) {
+            // set the owning side to null (unless already changed)
+            if ($relevance->getCandidate() === $this) {
+                $relevance->setCandidate(null);
+            }
+        }
+
+        return $this;
     }
 }

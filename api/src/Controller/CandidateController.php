@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Candidate;
+use App\Entity\CandidateStatuses;
 use App\Repository\CandidateRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,15 +36,22 @@ class CandidateController extends AbstractController
             ->select('candidate')
             ->from(Candidate::class, 'candidate')
             ->orderBy('candidate.id', 'DESC')
-            ->leftJoin('candidate.skills', 'skills')
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
         if ($request->query->has('skills')) {
             $queryBuilder
+                ->join('candidate.skills', 'skills')
                 ->andWhere($expr->in('skills.id', ':skills'))
-                ->setParameter('skills', $request->query->get('skills'))
-            ;
+                ->setParameter('skills', $request->query->get('skills'));
+        }
+
+        if ($request->query->has('status')) {
+            CandidateStatuses::validate($request->query->get('status'));
+
+            $queryBuilder
+                ->andWhere($expr->in('candidate.status', ':status'))
+                ->setParameter('status', $request->query->get('status'));
         }
 
         return $this->json([
