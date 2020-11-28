@@ -98,6 +98,7 @@ class VacancyController extends AbstractController
             ->from(Relevance::class, 'relevance')
             ->join('relevance.candidate', 'candidate')
             ->join('relevance.vacancy', 'vacancy')
+            ->orderBy('relevance.fit', 'DESC')
             ->where($expr->eq('vacancy.id', ':id'))
             ->setParameter('id', $vacancy->getId());
 
