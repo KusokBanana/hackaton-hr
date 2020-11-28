@@ -98,6 +98,11 @@ class Candidate
      */
     private Collection $relevance;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Relevance::class, cascade={"persist", "remove"})
+     */
+    private ?Relevance $mostRelevant;
+
     public function __construct(
         string $name,
         string $sex,
@@ -239,6 +244,23 @@ class Candidate
                 $relevance->setCandidate(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMostRelevant(): ?Relevance
+    {
+        return $this->mostRelevant;
+    }
+
+    public function hasMostRelevant(): bool
+    {
+        return $this->mostRelevant instanceof Relevance;
+    }
+
+    public function setMostRelevant(?Relevance $mostRelevant): self
+    {
+        $this->mostRelevant = $mostRelevant;
 
         return $this;
     }

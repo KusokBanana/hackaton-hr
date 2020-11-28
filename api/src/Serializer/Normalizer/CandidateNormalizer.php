@@ -18,7 +18,6 @@ class CandidateNormalizer implements NormalizerInterface, CacheableSupportsMetho
     public function normalize($candidate, string $format = null, array $context = []): array
     {
         /* @var $candidate Candidate */
-
         return [
             'id' => $candidate->getId(),
             'name' => $candidate->getName(),
@@ -56,6 +55,10 @@ class CandidateNormalizer implements NormalizerInterface, CacheableSupportsMetho
             ),
             'languages' => $candidate->getLanguages(),
             'skills' => $this->normalizer->normalize($candidate->getSkills(), $format, $context),
+            'most_relevant' => $candidate->hasMostRelevant() ? [
+                'fit' => $candidate->getMostRelevant()->getFit(),
+                'vacancy' => $candidate->getMostRelevant()->getVacancy()->getTitle(),
+            ] : null,
         ];
     }
 

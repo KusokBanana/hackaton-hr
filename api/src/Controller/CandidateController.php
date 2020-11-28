@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Candidate;
 use App\Entity\CandidateStatuses;
 use App\Repository\CandidateRepository;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,11 +16,17 @@ class CandidateController extends AbstractController
 {
     private CandidateRepository $candidateRepository;
     private EntityManagerInterface $entityManager;
+    private Connection $connection;
 
-    public function __construct(CandidateRepository $candidateRepository, EntityManagerInterface $entityManager)
+    public function __construct(
+        CandidateRepository $candidateRepository,
+        EntityManagerInterface $entityManager,
+        Connection $connection
+    )
     {
         $this->candidateRepository = $candidateRepository;
         $this->entityManager = $entityManager;
+        $this->connection = $connection;
     }
 
     /**
@@ -35,7 +42,9 @@ class CandidateController extends AbstractController
         $queryBuilder = $this->entityManager->createQueryBuilder()
             ->select('candidate')
             ->from(Candidate::class, 'candidate')
-            ->orderBy('candidate.id', 'DESC')
+            ->join('candidate.mostRelevant', 'most_relevant')
+            ->orderBy('most_relevant.fit', 'DESC')
+            ->addOrderBy('candidate.id', 'DESC')
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
