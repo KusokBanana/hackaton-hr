@@ -3,7 +3,7 @@ version: '3'
 services:
     database:
         image: postgres:12.4
-        container_name: raifhack_db
+        container_name: hr_db
         restart: always
         ports:
             - 5432:5432
@@ -16,16 +16,17 @@ services:
         volumes:
             - ./dbdata:/var/lib/postgresql/data
     php-fpm:
-        container_name: raifhack_php
+        container_name: hr_php
         build:
             context: .
             dockerfile: docker/php-fpm/Dockerfile
         volumes:
             - ./api/:/var/www/
+            - ./.env:/var/www/.env.local
         networks:
             - symfony
     nginx:
-        container_name: raifhack_nginx
+        container_name: hr_nginx
         build:
             context: .
             dockerfile: docker/nginx/Dockerfile
@@ -45,7 +46,7 @@ services:
 #            - ./api/vendor:/app/vendor
 
 #    angular:
-#        container_name: raifhack_frontend
+#        container_name: hr_frontend
 #        build:
 #            context: .
 #            dockerfile: docker/frontend/Dockerfile
@@ -58,7 +59,7 @@ services:
 #            - symfony
     
     # prediction:
-    #     container_name: prediction
+    #     container_name: hr_prediction
     #     build:
     #         context: ./prediction
     #         dockerfile: Dockerfile
