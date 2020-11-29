@@ -1,11 +1,8 @@
 <template>
   <div
     class="position-card flex flex-col bg-white bg-no-repeat bg-right-bottom rounded shadow-card p-5"
-    :style="{
-      'background-image': require('@/assets/images/cardbg.png'),
-    }"
   >
-    <div class="font-medium">{{item.title}}</div>
+    <div class="font-medium cursor-pointer" @click="$router.push({ name: 'Position Candidates', params: { id: item.id } })">{{item.title}}</div>
     <div class="text-positiongrey mt-3">{{item.department}}</div>
     <div class="flex-grow"></div>
     <div class="flex flex-row-reverse items-center">
@@ -23,11 +20,11 @@
 export default {
     props:['item'],
   computed: {
-    styles() {
-      return {
-        "background-image": require("@/assets/images/cardbg.png"),
-      };
-    },
+    // styles() {
+    //   return {
+    //     "background-image": require("@/assets/images/cardbg.png"),
+    //   };
+    // },
   },
 };
 </script>
@@ -36,5 +33,6 @@ export default {
 .position-card {
   min-width: 330px;
   min-height: 140px;
+  background-image: url('~@/assets/images/cardbg.png');
 }
 </style>

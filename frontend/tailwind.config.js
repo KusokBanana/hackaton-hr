@@ -16,7 +16,8 @@ module.exports = {
         "appdivider": "#DADDEF",
         "progress": "#E9EEF1",
         "appred": "#F7685B",
-        "positiongrey": "#C3C3C3"
+        "positiongrey": "#C3C3C3",
+        "candidategrey": "#7D7D7D"
       },
       width: {
         "220px": "220px",

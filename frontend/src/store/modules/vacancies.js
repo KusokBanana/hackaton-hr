@@ -11,14 +11,14 @@ const state = () => ({
 const getters = {
   vacancy: (state) => {
     return (id) => {
-      _.find(state.items, {id: id})
+      return _.find(state.items, {id: id})
     }
   },
   hasUnprocessed: (state) => {
     return state.items.filter(item => item.unprocessed_count > 0)
   },
   services: (state) => {
-    return state.items.map(item => item.service)
+    return _.uniq(state.items.map(item => item.department))
   }
 }
 

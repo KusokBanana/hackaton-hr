@@ -22,6 +22,23 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/positions/PositionsList.vue"),
   },
+  {
+    path: "/positions/candidates",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/candidates/CandidatesList.vue"),
+  },
+  {
+    path: "/positions/:id/candidates",
+    name: "Position Candidates",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/candidates/CandidatesVacancyList.vue"),
+  },
+  {
+    path: "/resume/:id/",
+    name: "Resume",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/resume/ResumeCard.vue"),
+  }
 ];
 
 const router = new VueRouter({
