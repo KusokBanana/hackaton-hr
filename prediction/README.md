@@ -34,17 +34,9 @@
 .
 ├── Makefile
 ├── README.md
-├── back
-│   ├── auth
-│   └── model
+├── api - backend проекта (Symfony)
 ├── docker-compose.yaml
-├── env
-│   ├── LICENSE.md
-│   ├── bin
-│   ├── include
-│   ├── lib
-│   └── pyvenv.cfg
-├── front
+├── frontend - frontend проекта (Vue.js)
 │   ├── Dockerfile
 │   ├── Makefile
 │   ├── README.md
@@ -57,31 +49,21 @@
 │   ├── src
 │   ├── tailwind.config.js
 │   └── vue.config.js
-├── infra
-│   ├── __init__.py
-│   ├── env
-│   ├── metrics
-│   ├── postgres
-│   ├── runner
-│   └── traefik
-└── ml
-    ├── Makefile
-    ├── README.md
-    ├── __init__.py
-    ├── __pycache__
-    ├── bin
-    ├── data
-    ├── data_preparation.ipynb
-    ├── models_selection.ipynb
-    ├── requirements.txt
-    └── scripts
+├── docker - докерфайлы
+│   ├── frontend
+│   ├── nginx
+│   ├── php-fpm
+└── prediction - модели ML
+    ├── RUGPT3.ipynb - ruGPT-3, прототип конструктора вакансий
+    ├── resume_sample.ipynb
+    ├── resume_to_vacancy.ipynb - метчинг резюме и вакансии
 ```
-Исходный код серверной части — в папке `back`, исходный код браузерной части приложения — в папке `front`. Кроме того, данные по разработке модели в директории `ml`, а данные по инфраструктурным вопросам в `infra`
+Исходный код серверной части — в папке `api`, исходный код браузерной части приложения — в папке `frontend`. Кроме того, данные по разработке модели в директории `prediction`, а данные по инфраструктурным вопросам в `dockerfile`
 
-Каждая директория по возможности содержит `README.md` файл с описанием и `Makefile` с базовыми командами.
+Каждая директория по возможности содержит файл `Makefile` с базовыми командами.
 
 ## Архитектура приложения
-Приложение состоит из 7 микро-сервисов, включая сервис авторизации, сервис моделей, сервис сбора метрик, сервис-ui и  т.д. 
+Приложение состоит из микро-сервисов, включая сервис авторизации, сервис моделей, сервис-ui и  т.д. 
 ML модели размещены отдельно и запускаются в docker-контейнерах в требуемом окружении.
 
 # Дополнительные материалы
