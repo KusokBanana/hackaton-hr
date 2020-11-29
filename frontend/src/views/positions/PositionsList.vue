@@ -3,7 +3,7 @@
     <div class="flex flex-row items-center mb-5">
       <div class="divide-x divide-appdivider flex items-center space-x-4">
         <div class="text-2xl">Вакансии</div>
-        <div class="pl-4 text-menugrey">сегодня {{ currentDate }}</div>
+        <div class="pl-4 text-menugrey">сегодня {{ new Date() | moment("D.MM.YYYY") }}</div>
       </div>
       <div class="flex-grow"></div>
       <div class="flex h-full items-center border-b">

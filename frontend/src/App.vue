@@ -6,9 +6,11 @@
     <div class="flex-grow z-20 flex flex-col">
       <div class="h-60px z-10 shadow-bottom relative flex items-center">
         <SearchBox class="flex-grow" />
-        <div class="text-menugrey">Добавить</div>
+        <div class="text-menugrey" @click="$router.push('/position/add')">Добавить</div>
         <div
+          @click="$router.push('/position/add')"
           class="shadow-card mx-3 plus rounded flex items-center justify-center cursor-pointer"
+          
         >
           <img
             class="cursor-pointer"

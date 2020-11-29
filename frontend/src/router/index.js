@@ -38,7 +38,12 @@ const routes = [
     name: "Resume",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/resume/ResumeCard.vue"),
-  }
+  },
+  {
+    path: "/position/add",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/positions/PositionCreator.vue"),
+  },
 ];
 
 const router = new VueRouter({

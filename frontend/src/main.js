@@ -22,6 +22,8 @@ import "tailwindcss/tailwind.css"
 import './assets/fonts/stylesheet.css'
 // import Unicon from 'vue-unicons'
 
+Vue.use(require('vue-moment'));
+
 Vue.config.productionTip = false
 
 new Vue({

@@ -26,6 +26,9 @@ module.exports = {
       minWidth: {
         "220px": "220px"
       },
+      minHeight: {
+        "half": "50vh"
+      },
       height: {
         "60px": "60px",
         "progress": "5px"

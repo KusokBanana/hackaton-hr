@@ -2,7 +2,7 @@
   <div class="flex flex-col">
       <div class="flex flex-row items-center divide-x divide-appdivider space-x-4">
           <div class="text-2xl">Задачи</div>
-          <div class="pl-4 text-menugrey">сегодня {{currentDate}}</div>
+          <div class="pl-4 text-menugrey">сегодня {{ new Date() | moment("D.MM.YYYY") }}</div>
       </div>
       <div class="grid grid-cols-2 gap-5 mt-3">
           <ApplicationColumn />
@@ -20,9 +20,6 @@ export default {
         RequestColumn
     },
     computed: {
-        currentDate() {
-            return "29.11.2020"
-        }
     },
     created() {
       this.$store.dispatch('vacancies/getVacancies')
